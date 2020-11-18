@@ -16,18 +16,49 @@ Pod::Spec.new do |spec|
 
   spec.swift_versions = [5.1]
   spec.requires_arc = true
-  spec.ios.deployment_target = '12.0'
+  spec.ios.deployment_target = '11.0'
   spec.osx.deployment_target = '10.10'
 
-  spec.source_files  = "XpringKit/**/*.swift"
-  spec.resources =     [ "XpringKit/Common/Resources/*" ]
+  spec.default_subspec = 'All'
 
-  spec.dependency 'Alamofire', '~> 4.9.0'
-  spec.dependency 'BigInt', '~> 5.0.0'
-  spec.dependency 'SwiftGRPC', '~> 0.9.1'
-  spec.dependency 'SwiftProtobuf', '~> 1.5.0'
+  spec.subspec 'Common' do |common_subspec|
+    common_subspec.resources = [ "XpringKit/Common/Resources/*" ]
+    common_subspec.source_files = 'XpringKit/Common/*.swift'
+    common_subspec.frameworks = 'Foundation'
+  end
 
-  spec.frameworks = "Foundation"
+  spec.subspec 'ILP' do |ilp_subspec|
+    ilp_subspec.source_files = 'XpringKit/XRP/**/*.swift'
+    ilp_subspec.dependency 'XpringKit/Common'
+    ilp_subspec.dependency 'SwiftGRPC', '~> 0.9.1'
+    ilp_subspec.dependency 'SwiftProtobuf', '~> 1.5.0'
+  end
+
+  spec.subspec 'PayID' do |payid_subspec|
+    payid_subspec.source_files = 'XpringKit/XRP/**/*.swift'
+    payid_subspec.dependency 'XpringKit/Common'
+    payid_subspec.dependency 'Alamofire', '~> 4.9.0'
+  end
+
+  spec.subspec 'Xpring' do |xpring_subspec|
+    xpring_subspec.source_files = 'XpringKit/XRP/**/*.swift'
+    xpring_subspec.dependency 'XpringKit/Common'
+  end
+
+  spec.subspec 'XRP' do |xrp_subspec|
+    xrp_subspec.source_files = 'XpringKit/XRP/**/*.swift'
+    xrp_subspec.dependency 'XpringKit/Common'
+    xrp_subspec.dependency 'BigInt', '~> 5.0.0'
+    xrp_subspec.dependency 'SwiftGRPC', '~> 0.9.1'
+    xrp_subspec.dependency 'SwiftProtobuf', '~> 1.5.0'
+  end
+
+  spec.subspec 'All' do |all_subspec|
+    all_subspec.dependency 'XpringKit/ILP'
+    all_subspec.dependency 'XpringKit/PayID'
+    all_subspec.dependency 'XpringKit/Xpring'
+    all_subspec.dependency 'XpringKit/XRP'
+  end
 
   spec.test_spec "Tests" do |test_spec|
     test_spec.source_files = ["Tests/**/*.swift"]
